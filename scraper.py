@@ -1,6 +1,7 @@
 import sys
 import urllib.request
 from html.parser import HTMLParser
+from urllib.parse import urlparse
 
 class MyParser(HTMLParser):
     def __init__(self):
@@ -43,10 +44,15 @@ class MyParser(HTMLParser):
                 self.body_text.append(text)
 
 if len(sys.argv) != 2:
-    print("usage: python fetch_page.py <url>")
+    print("usage: python scraper.py <url>")
     sys.exit(1)
 
 url = sys.argv[1]
+
+# Make sure URL has a scheme to avoid 'unknown url type' error
+parsed = urlparse(url)
+if not parsed.scheme:
+    url = "https://" + url
 
 # adding header because some sites block python bot
 req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -58,13 +64,17 @@ try:
     p = MyParser()
     p.feed(html)
     
-    print(p.title.strip())
+    # Title (1 line)
+    title = p.title.strip()
+    title = ' '.join(title.split())
+    print(title)
+    
+    # Body Text
     print(" ".join(p.body_text))
     
+    # Outlinks (1 per line)
     for link in p.links:
         print(link)
         
 except Exception as e:
-    print("error fetching url:")
-    print(e)
-
+    print("error fetching url:", e)
