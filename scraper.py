@@ -49,7 +49,7 @@ if len(sys.argv) != 2:
 
 url = sys.argv[1]
 
-# Make sure URL has a scheme to avoid 'unknown url type' error
+#  avoid 'unknown url type' error
 parsed = urlparse(url)
 if not parsed.scheme:
     url = "https://" + url
@@ -72,7 +72,7 @@ try:
     # Body Text
     print(" ".join(p.body_text))
     
-    # Outlinks (1 per line)
+    # Outlinks
     for link in p.links:
         print(link)
         
